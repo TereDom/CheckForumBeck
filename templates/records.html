@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Записи</h1>
+{% for item in news%}
+<div class="col-md6 border rounded">
+    <h2>{{item.title}}</h2>
+    <div>
+        {{item.content}}
+    </div>
+    <div>
+        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+    </div>
+    <h3>Комментарии</h3>
+    <!--объект класса News имеет атрибут comment, который представляет собой список комментариев к данной записи-->
+    {% for comment in title.comments%}
+    <div>
+        {{comment}}
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
+{% endblock %}
