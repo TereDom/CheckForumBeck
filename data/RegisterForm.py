@@ -9,5 +9,5 @@ class RegisterForm(FlaskForm):
     password = PasswordField('* Пароль', validators=[DataRequired()])
     password_again = PasswordField('* Повторите пароль', validators=[DataRequired()])
     name = StringField('* Имя пользователя', validators=[DataRequired()])
-    about = TextAreaField("Немного о себе")
+    vk_id = StringField('ID ВКонтакте')
     submit = SubmitField('Войти')
