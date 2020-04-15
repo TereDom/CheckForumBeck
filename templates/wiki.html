@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>CheckWikiBeck</h1>
+<h3>Цель игры: пройти лабиринт, минуя препятствия в виде монстров.</h3>
+{% for item in wiki_base%}
+<div class="col-md6 border rounded">
+    <h3>{{item.title}}</h3>
+    <img src={{item.img}} width="110" height="110">
+    <h4>{{item.text}}</h4>
+</div>
+{% endfor %}
+{% endblock %}
