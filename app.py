@@ -1,24 +1,23 @@
 from flask import Flask, render_template
 from data import db_session
-from flask_login import login_user, LoginManager
+from flask_login import login_user, LoginManager, current_user
 from werkzeug.utils import redirect
 from data.LoginForm import LoginForm
 from data.RegisterForm import RegisterForm
 from data.users import User
+from data.news import News
+from data.comment import Comment
 from data.NewsForm import NewsForm
-
-
-
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
+db_session.global_init('db/DataBase.sqlite')
 
 
 def main():
-    db_session.global_init('db/DataBase.sqlite')
     app.run(port=8080, host='127.0.0.1')
 
 
