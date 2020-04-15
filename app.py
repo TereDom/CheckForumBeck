@@ -1,14 +1,11 @@
 from flask import Flask, render_template
 from data import db_session
-from flask_login import login_user, LoginManager
+from flask_login import login_user, LoginManager, current_user
 from werkzeug.utils import redirect
 from data.LoginForm import LoginForm
 from data.RegisterForm import RegisterForm
-from data.users import User
+from data.__all_models import User, WikiDB
 from data.NewsForm import NewsForm
-
-
-
 
 
 app = Flask(__name__)
@@ -42,8 +39,9 @@ def register():
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = User(name=form.name.data,
-            email=form.email.data,
-            vk_id=form.vk_id.data)
+                    email=form.email.data,
+                    vk_id=form.vk_id.data)
+
         user.set_password(form.password.data)
         session.add(user)
         session.commit()
@@ -77,17 +75,24 @@ def records():
 def add_news():
     form = NewsForm()
     if form.validate_on_submit():
-        session = db_session.create_session()
-        news = News()
-        news.title = form.title.data
-        news.content = form.content.data
-        news.is_private = form.is_private.data
-        current_user.news.append(news)
-        session.merge(current_user)
-        session.commit()
+        # session = db_session.create_session()
+        # news = News()
+        # news.title = form.title.data
+        # news.content = form.content.data
+        # news.is_private = form.is_private.data
+        # current_user.news.append(news)
+        # session.merge(current_user)
+        # session.commit()
         return redirect('/')
     return render_template('news.html', title='Добавление новости',
                            form=form)
+
+
+@app.route('/wiki', methods=['GET', 'POST', 'DELETE', 'PUT'])
+def wiki():
+    session = db_session.create_session()
+    wiki_base = session.query(WikiDB)
+    return render_template('wiki.html', title='Энциклопедия CheckBeck', wiki_base=wiki_base)
 
 
 @app.route('/')
