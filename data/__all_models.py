@@ -1,3 +1,3 @@
-from . import users
-from . import news
-from . import comment
+from .users import User
+from .news import News
+from .comment import Comment
