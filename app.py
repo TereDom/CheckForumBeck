@@ -8,6 +8,7 @@ from data.users import User
 from data.news import News
 from data.comment import Comment
 from data.NewsForm import NewsForm
+from data.news import News
 
 
 app = Flask(__name__)
@@ -18,7 +19,7 @@ db_session.global_init('db/DataBase.sqlite')
 
 
 def main():
-    app.run(port=8080, host='127.0.0.1')
+    app.run(port=8000, host='127.0.0.1')
 
 
 @login_manager.user_loader
@@ -58,7 +59,7 @@ def login():
         user = session.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect("/")
+            return redirect('/forum')
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
@@ -67,9 +68,9 @@ def login():
 
 @app.route('/forum', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def records():
-    # session = db_session.create_session()
-    # news = session.query(News).filter(News.is_private != True)
-    return render_template("records.html")
+    session = db_session.create_session()
+    news = session.query(News)
+    return render_template("records.html", news=news)
 
 
 @app.route('/news',  methods=['GET', 'POST'])
@@ -77,14 +78,19 @@ def add_news():
     form = NewsForm()
     if form.validate_on_submit():
         session = db_session.create_session()
-        news = News()
-        news.title = form.title.data
-        news.content = form.content.data
-        news.is_private = form.is_private.data
-        current_user.news.append(news)
+        news = News(
+            title=form.title.data,
+            content=form.content.data,
+            user_id=current_user.id
+        )
+        # news.title = form.title.data
+        # news.content = form.content.data
+        # news.is_private = form.is_private.data
+        # current_user.news.append(news)
         session.merge(current_user)
+        session.add(news)
         session.commit()
-        return redirect('/')
+        return redirect('/forum')
     return render_template('news.html', title='Добавление новости',
                            form=form)
 
