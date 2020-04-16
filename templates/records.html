@@ -27,8 +27,13 @@
     <h3>Комментарии</h3>
     {% for comment in comments %}
     {% if comment.news_id == item.id %}
-        <h5>{{comment.user.name}}</h5>
-        <p>{{comment.content}}</p>
+        <div class="media">
+            <img src="{{comment.user.avatar}}" class="mr-3" alt="Аватар" height="64px">
+            <div class="media-body">
+                <h5 class="mt-0 {{comment.user.status}}">{{comment.user.name}}</h5>
+                {{comment.content}}
+            </div>
+        </div>
         {% if current_user.id == comment.user_id %}
             <a href="/refactor_comment/{{comment.id}}" class="btn btn-primary">Изменить</a>
             <a href="/delete_comment/{{comment.id}}" class="btn btn-primary">Удалить</a>

@@ -3,6 +3,7 @@ import sqlalchemy
 from .db_session import SqlAlchemyBase
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import url_for
 
 
 class User(SqlAlchemyBase, UserMixin):
@@ -11,6 +12,8 @@ class User(SqlAlchemyBase, UserMixin):
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True, nullable=True)
+    avatar = sqlalchemy.Column(sqlalchemy.String, default='/static/img/avatars/default_avatar.png')
+    status = sqlalchemy.Column(sqlalchemy.String, default='user')
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     vk_id = sqlalchemy.Column(sqlalchemy.Integer)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
