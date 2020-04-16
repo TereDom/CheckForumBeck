@@ -10,3 +10,4 @@ class WikiDB(SqlAlchemyBase, UserMixin):
     img = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     text = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    status = sqlalchemy.Column(sqlalchemy.String)

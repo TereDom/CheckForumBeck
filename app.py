@@ -90,9 +90,15 @@ def add_news():
 
 @app.route('/wiki', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def wiki():
+    return render_template('general_wiki.html')
+
+
+@app.route('/<status>')
+def print(status):
     session = db_session.create_session()
     wiki_base = session.query(WikiDB)
-    return render_template('wiki.html', title='Энциклопедия CheckBeck', wiki_base=wiki_base)
+    return render_template('wiki.html', title='Энциклопедия CheckBeck',
+                           wiki_base=wiki_base, status=status)
 
 
 @app.route('/')
