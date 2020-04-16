@@ -93,7 +93,7 @@ def wiki():
     return render_template('general_wiki.html')
 
 
-@app.route('/<status>')
+@app.route('/wiki/<status>')
 def print(status):
     session = db_session.create_session()
     wiki_base = session.query(WikiDB)
