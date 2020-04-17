@@ -70,6 +70,10 @@ def login():
 
 
 @app.route('/')
+def main_page():
+    return render_template('main.html')
+
+
 @app.route('/forum', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def records():
     session = db_session.create_session()
