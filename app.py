@@ -170,7 +170,7 @@ def wiki():
 
 
 @app.route('/wiki/<status>')
-def print(status):
+def print_wiki(status):
     session = db_session.create_session()
     wiki_base = session.query(WikiDB)
     return render_template('wiki.html', title='Энциклопедия CheckBeck',
