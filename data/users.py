@@ -14,6 +14,7 @@ class User(SqlAlchemyBase, UserMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     vk_id = sqlalchemy.Column(sqlalchemy.Integer)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
+    avatar = sqlalchemy.Column(sqlalchemy.String, default='/static/img/avatars/default_avatar.png')
     status = sqlalchemy.Column(sqlalchemy.String, default='user')
 
     def set_password(self, password):

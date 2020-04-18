@@ -1,9 +1,10 @@
+import os
 import datetime
 from flask import Flask, render_template, url_for
 from data import db_session
 from flask_login import login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.utils import redirect
-
+from data.refactore_image import refactor_image
 
 from data.__all_forms import *
 from data.__all_models import *
@@ -46,6 +47,14 @@ def register():
         user.set_password(form.password.data)
         session.add(user)
         session.commit()
+        f = form.avatar.data
+        if f:
+            file_way = os.getcwd() + f'\\static\\img\\avatars\\avatar_{user.id}.png'
+            f.save(os.getcwd() + f'\\static\\img\\avatars\\avatar_{user.id}.png')
+            refactor_image(file_way)
+            user = session.query(User).filter(User.email == form.email.data).first()
+            user.avatar = f'/static/img/avatars/avatar_{user.id}.png'
+            session.commit()
         return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
 
@@ -74,8 +83,8 @@ def records():
     return render_template("records.html", news=news, comments=comments)
 
 
-@app.route('/new_news',  methods=['GET', 'POST'])
-def new_news():
+@app.route('/create_news',  methods=['GET', 'POST'])
+def create_news():
     form = NewsForm()
 
     param = dict()
@@ -173,7 +182,7 @@ def refactor_comment(comment_id):
     comment = session.query(Comment).filter(Comment.id == comment_id).first()
 
     param = dict()
-    param['title'] = 'Добавление комментария'
+    param['title'] = 'Изменение комментария'
     param['style_way'] = url_for('static', filename='css/style.css')
     param['form'] = form
     param['template_name_or_list'] = 'comment.html'
@@ -188,6 +197,27 @@ def refactor_comment(comment_id):
     form.content.data = comment.content
 
     return render_template(**param)
+
+
+@app.route('/delete_comment/<comment_id>')
+def delete_comment(comment_id):
+    session = db_session.create_session()
+    comment = session.query(Comment).filter(Comment.id == comment_id).first()
+    param = dict()
+
+    if comment.user != current_user:
+        param['template_file_or_list'] = 'access_error.html'
+        param['title'] = ''
+        return render_template(**param)
+
+    if not comment:
+        param['template_file_or_list'] = 'error.html'
+        param['title'] = ''
+        return render_template(**param)
+
+    session.delete(comment)
+    session.commit()
+    return redirect('/forum')
 
 
 @app.route('/wiki', methods=['GET', 'POST', 'DELETE', 'PUT'])

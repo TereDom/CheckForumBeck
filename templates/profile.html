@@ -9,7 +9,16 @@
             <ul class="list-group">
                 <li class="list-group-item disabled" aria-disabled="true"><h3>{{user.name}}</h3></li>
                 <li class="list-group-item">Email: {{user.email}}</li>
-                <li class="list-group-item">Статус пользователя: {{user.status}}</li>
+                <li class="list-group-item">
+                    Статус пользователя:
+                    {% if user.status == "admin" %}
+                        <span class="badge badge-warning">Модератор</span>
+                    {% elif user.status == "develop" %}
+                        <span class="badge badge-danger">Разработчик</span>
+                    {% else %}
+                        <span class="badge badge-primary">Посетитель</span>
+                    {% endif %}
+                </li>
                 {% if user.vk_id%}
                     <li class="list-group-item">VK id: {{user.vk_id}}</li>
                 {% endif %}
@@ -24,7 +33,7 @@
             <div>
                 {{item.content}}
             </div>
-            <div>
+            <div class="name">
                 Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
             </div>
             {% if current_user.id %}
@@ -38,7 +47,7 @@
                 <div class="media">
                     <img src="{{comment.user.avatar}}" class="mr-3" alt="Аватар" height="64px">
                     <div class="media-body">
-                        <h5 class="mt-0"><a href="/profile/{{comment.user_id}}">
+                        <h5 class="mt-0"><a href="/profile/{{comment.user_id}}" style="color: #000000;">
                             {{comment.user.name}}
                             {% if comment.user.status == "admin" %}
                                 <span class="badge badge-warning">Модератор</span>

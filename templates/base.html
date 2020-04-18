@@ -7,6 +7,7 @@
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
+    <link rel="stylesheet" href="{{style_way}}">
     <title>{{title}}</title>
 </head>
 <body>
@@ -15,8 +16,9 @@
         <a class="navbar-brand" href="#">CheckBeck.site</a>
         {% if current_user.is_authenticated %}
             <p>
+                <img src="{{current_user.avatar}}" class="mr-3" alt="Аватар" height="32px">
                 <a class="navbar-brand" href="/profile/{{current_user.id}}">{{ current_user.name }}</a>
-                <a class="btn btn-danger" href="'/logout">Выйти</a>
+                <a class="btn btn-danger" href="/logout">Выйти</a>
             </p>
         {% else %}
             <p>

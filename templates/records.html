@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Записи</h1>
 {% if current_user.id %}
-    <a href="/new_news" class="btn btn-primary"><h2>Создать запись</h2></a>
+    <a href="/create_news" class="btn btn-primary"><h6>Создать запись</h6></a>
 {% endif %}
 {% for item in news%}
 <div class="col-md6 border rounded">
@@ -13,14 +13,14 @@
         {{item.content}}
     </div>
     <div>
-        Автор - <a class="{{item.user.status}}" href="'/profile/{{item.user_id}}">{{item.user.name}}</a>, Дата написания - {{item.created_date}}
+        Автор - <a href="/profile/{{item.user_id}}" style="color: #000000;">{{item.user.name}}</a>, Дата написания - {{item.created_date}}
     </div>
     {% if current_user.id %}
         <div>
-            <a href="/create_comment/{{item.id}}" class="btn btn-primary">Комментировать</a>
+            <a href="/create_comment/{{item.id}}/0" class="btn btn-primary">Комментировать</a>
             {% if current_user.id == item.user_id %}
                 <a href="/refactor_news/{{item.id}}" class="btn btn-primary">Изменить</a>
-                <a href="/delete_news/{{item.id}}" class="btn btn-primary">Удалить</a>
+                <a href="/delete_news/{{item.id}}" class="btn btn-danger">Удалить</a>
             {% endif %}
         </div>
     {% endif %}
@@ -28,13 +28,23 @@
     {% for comment in comments %}
     {% if comment.news_id == item.id %}
         <div class="media">
-            <div class="medis-body">
-                <a class="{{comment.user.status}}" href="/profile/{{comment.user_id}}"><h5>{{comment.user.name}}</h5></a>
-                <p>{{comment.content}}</p>
-                {% if current_user.id == comment.user_id %}
-                    <a href="/refactor_comment/{{comment.id}}" class="btn btn-primary">Изменить</a>
-                    <a href="/delete_comment/{{comment.id}}" class="btn btn-primary">Удалить</a>
-                {% endif %}
+            <img src="{{comment.user.avatar}}" class="mr-3" alt="Аватар" height="64px">
+            <div class="media-body">
+                <h5 class="mt-0"><a href="/profile/{{comment.user_id}}" style="color: #000000;">
+                    {{comment.user.name}}
+                    {% if comment.user.status == "admin" %}
+                        <span class="badge badge-warning">Модератор</span>
+                    {% elif comment.user.status == "develop" %}
+                        <span class="badge badge-danger">Разработчик</span>
+                    {% endif %}
+                </a></h5>
+                {{comment.content}}
+                <div>
+                    {% if current_user.id == item.user_id %}
+                        <a href="/refactor_comment/{{comment.id}}" class="btn btn-primary">Изменить</a>
+                        <a href="/delete_comment/{{comment.id}}" class="btn btn-danger">Удалить</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     {% endif %}
