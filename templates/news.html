@@ -23,7 +23,10 @@
             </p>
         {% endfor %}
     </p>
-    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    <p>
+        {{ form.submit(type="submit", class="btn btn-primary") }}
+        <a href="{{ back_way }}" class="btn btn-danger">Отмена</a>
+    </p>
 
     {{message}}
 </form>

@@ -13,7 +13,7 @@
         {{item.content}}
     </div>
     <div>
-        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+        Автор - <a class="{{item.user.status}}" href="'/profile/{{item.user_id}}">{{item.user.name}}</a>, Дата написания - {{item.created_date}}
     </div>
     {% if current_user.id %}
         <div>
@@ -27,12 +27,16 @@
     <h3>Комментарии</h3>
     {% for comment in comments %}
     {% if comment.news_id == item.id %}
-        <h5>{{comment.user.name}}</h5>
-        <p>{{comment.content}}</p>
-        {% if current_user.id == comment.user_id %}
-            <a href="/refactor_comment/{{comment.id}}" class="btn btn-primary">Изменить</a>
-            <a href="/delete_comment/{{comment.id}}" class="btn btn-primary">Удалить</a>
-        {% endif %}
+        <div class="media">
+            <div class="medis-body">
+                <a class="{{comment.user.status}}" href="/profile/{{comment.user_id}}"><h5>{{comment.user.name}}</h5></a>
+                <p>{{comment.content}}</p>
+                {% if current_user.id == comment.user_id %}
+                    <a href="/refactor_comment/{{comment.id}}" class="btn btn-primary">Изменить</a>
+                    <a href="/delete_comment/{{comment.id}}" class="btn btn-primary">Удалить</a>
+                {% endif %}
+            </div>
+        </div>
     {% endif %}
     {% endfor %}
 </div>

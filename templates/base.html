@@ -14,7 +14,10 @@
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="#">CheckBeck.site</a>
         {% if current_user.is_authenticated %}
-            <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
+            <p>
+                <a class="navbar-brand" href="/profile/{{current_user.id}}">{{ current_user.name }}</a>
+                <a class="btn btn-danger" href="'/logout">Выйти</a>
+            </p>
         {% else %}
             <p>
                 <a class="btn btn-primary " href="/register">Зарегистрироваться</a>

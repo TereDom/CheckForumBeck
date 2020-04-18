@@ -1,12 +1,8 @@
 import datetime
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 from data import db_session
 from flask_login import login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.utils import redirect
-from data.LoginForm import LoginForm
-from data.RegisterForm import RegisterForm
-from data.__all_models import User, WikiDB
-from data.NewsForm import NewsForm
 
 
 from data.__all_forms import *
@@ -81,6 +77,14 @@ def records():
 @app.route('/new_news',  methods=['GET', 'POST'])
 def new_news():
     form = NewsForm()
+
+    param = dict()
+    param['title'] = 'Добавление новости'
+    param['style_way'] = url_for('static', filename='css/style.css')
+    param['form'] = form
+    param['template_name_or_list'] = 'news.html'
+    param['back_way'] = '/forum'
+
     if form.validate_on_submit():
         session = db_session.create_session()
         news = News(
@@ -92,7 +96,7 @@ def new_news():
         session.add(news)
         session.commit()
         return redirect('/forum')
-    return render_template('news.html', title='Добавление новости', form=form)
+    return render_template(**param)
 
 
 @app.route('/refactor_news/<news_id>', methods=['GET', 'POST'])
@@ -101,6 +105,13 @@ def refactor_news(news_id):
     session = db_session.create_session()
 
     news = session.query(News).filter(News.id == news_id).first()
+
+    param = dict()
+    param['title'] = 'Изменение новости'
+    param['style_way'] = url_for('static', filename='css/style.css')
+    param['form'] = form
+    param['template_name_or_list'] = 'news.html'
+    param['back_way'] = '/forum'
 
     if form.validate_on_submit():
         news.title = form.title.data
@@ -114,7 +125,7 @@ def refactor_news(news_id):
     form.title.data = news.title
     form.content.data = news.content
 
-    return render_template('news.html', title='Изменение новости', form=form)
+    return render_template(**param)
 
 
 @app.route('/delete_news/<news_id>')
@@ -129,9 +140,17 @@ def delete_news(news_id):
     return redirect('/forum')
 
 
-@app.route('/create_comment/<news_id>', methods=['GET', 'POST'])
-def create_comment(news_id):
+@app.route('/create_comment/<news_id>/<user_id>', methods=['GET', 'POST'])
+def create_comment(news_id, user_id):
     form = CommentForm()
+
+    param = dict()
+    param['title'] = 'Добавление комментария'
+    param['style_way'] = url_for('static', filename='css/style.css')
+    param['form'] = form
+    param['template_name_or_list'] = 'comment.html'
+    param['back_way'] = '/forum' if user_id == '0' else f'/profile/{user_id}'
+
     if form.validate_on_submit():
         session = db_session.create_session()
         comment = Comment(
@@ -143,7 +162,7 @@ def create_comment(news_id):
         session.add(comment)
         session.commit()
         return redirect('/forum')
-    return render_template('comment.html', title='Добавление комментария', form=form)
+    return render_template(**param)
 
 
 @app.route('/refactor_comment/<comment_id>', methods=['GET', 'POST'])
@@ -153,6 +172,13 @@ def refactor_comment(comment_id):
 
     comment = session.query(Comment).filter(Comment.id == comment_id).first()
 
+    param = dict()
+    param['title'] = 'Добавление комментария'
+    param['style_way'] = url_for('static', filename='css/style.css')
+    param['form'] = form
+    param['template_name_or_list'] = 'comment.html'
+    param['back_way'] = '/forum'
+
     if form.validate_on_submit():
         comment.content = form.content.data
 
@@ -161,7 +187,7 @@ def refactor_comment(comment_id):
 
     form.content.data = comment.content
 
-    return render_template('comment.html', title='Изменение комментария', form=form)
+    return render_template(**param)
 
 
 @app.route('/wiki', methods=['GET', 'POST', 'DELETE', 'PUT'])
@@ -182,6 +208,23 @@ def print_wiki(status):
 def logout():
     logout_user()
     return redirect("/forum")
+
+
+@app.route('/profile/<user_id>')
+def profile(user_id):
+    session = db_session.create_session()
+    user = session.query(User).filter(User.id == user_id).first()
+    news = session.query(News).filter(News.user_id == user_id)
+    comment = session.query(Comment).all()
+
+    param = dict()
+    param['title'] = user.name
+    param['user'] = user
+    param['news'] = news
+    param['comments'] = comment
+    param['template_name_or_list'] = 'profile.html'
+
+    return render_template(**param)
 
 
 if __name__ == '__main__':
