@@ -20,14 +20,11 @@ def bot(status, recipient=None):
         recipients = [recipient]
     else:
         recipients = session.query(User)
-    print(recipients[0].name)
 
     for elem in recipients:
-        print(1)
         if len(str(elem.vk_id)):
-            print(elem.vk_id)
             vk.messages.send(user_id=vk.users.get(user_ids=[elem.vk_id])[0]['id'],
-                             message=messages[status],
+                             message=f'{messages[status]} \n http://127.0.0.1:8000/forum',
                              random_id=random.randint(0, 2 ** 64))
 
 
