@@ -70,7 +70,6 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-@app.route('/')
 @app.route('/forum', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def records():
     param = dict()
@@ -178,16 +177,39 @@ def refactor_comment(comment_id):
     return render_template('comment.html', title='Изменение комментария', form=form)
 
 
+@app.route('/')
 @app.route('/wiki', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def wiki():
-    return render_template('general_wiki.html')
+    return render_template('general_wiki.html', title='Энциклопедия CheckBeck',
+                           status=current_user.status)
+
+
+@app.route('/wiki/new_wiki', methods=['GET', 'POST'])
+def create_new_wiki():
+    form = NewWikiPostForm()
+    if form.validate_on_submit():
+        if form.status.data not in ['monster', 'object', 'weapon']:
+            return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
+                           form=form, massage='Не существующий тип объекта')
+        session = db_session.create_session()
+        wiki_post = NewWikiPostForm(
+            title=form.title.data,
+            status=form.status.data,
+            image='#',
+            content=form.content.data
+        )
+        session.add(wiki_post)
+        session.commit()
+        return redirect('/wiki')
+    return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
+                           form=form, massage='')
 
 
 @app.route('/wiki/<status>')
 def print_wiki(status):
     session = db_session.create_session()
     wiki_base = session.query(WikiDB)
-    return render_template('wiki.html', title='Энциклопедия CheckBeck',
+    return render_template('wiki.html', title=f'Энциклопедия CheckBeck - {status}',
                            wiki_base=wiki_base, status=status)
 
 
