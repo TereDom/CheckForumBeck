@@ -7,7 +7,7 @@ from data.LoginForm import LoginForm
 from data.RegisterForm import RegisterForm
 from data.__all_models import User, WikiDB
 from data.NewsForm import NewsForm
-
+from vk_bot import bot
 
 from data.__all_forms import *
 from data.__all_models import *
@@ -96,6 +96,7 @@ def new_news():
         session.merge(current_user)
         session.add(news)
         session.commit()
+        bot("new_record")
         return redirect('/forum')
     return render_template('news.html', title='Добавление новости', form=form)
 
@@ -147,6 +148,10 @@ def create_comment(news_id):
         session.merge(current_user)
         session.add(comment)
         session.commit()
+
+        user_id = session.query(News).filter(News.id == news_id).first().user_id
+        recipient = session.query(User).filter(User.id == user_id).first()
+        bot('new_comment', recipient=recipient)
         return redirect('/forum')
     return render_template('comment.html', title='Добавление комментария', form=form)
 

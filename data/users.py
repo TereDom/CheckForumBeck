@@ -12,7 +12,7 @@ class User(SqlAlchemyBase, UserMixin):
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    vk_id = sqlalchemy.Column(sqlalchemy.Integer)
+    vk_id = sqlalchemy.Column(sqlalchemy.String)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
 
     def set_password(self, password):
