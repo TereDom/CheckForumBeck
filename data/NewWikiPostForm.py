@@ -6,6 +6,6 @@ from wtforms.validators import DataRequired
 class NewWikiPostForm(FlaskForm):
     title = StringField('Заголовок поста', validators=[DataRequired()])
     status = StringField('Тип объекта', validators=[DataRequired()])
-    image = FileField('Загрузить изображение')
+    image = FileField('Загрузить изображение', validators=[DataRequired()])
     content = TextAreaField('Добавить содержание', validators=[DataRequired()])
     submit = SubmitField('Добавить пост')

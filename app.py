@@ -188,14 +188,18 @@ def wiki():
 def create_new_wiki():
     form = NewWikiPostForm()
     if form.validate_on_submit():
+        img = form.image.data
+        file_way = os.getcwd() + f'\\static\\img\\wiki\\{img.filename}'
+        img.save(file_way)
+        print(img.filename)
         if form.status.data not in ['monster', 'object', 'weapon']:
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
-                           form=form, massage='Не существующий тип объекта')
+                                   form=form, massage='Не существующий тип объекта')
         session = db_session.create_session()
         wiki_post = NewWikiPostForm(
             title=form.title.data,
             status=form.status.data,
-            image='#',
+            image=img.filename,
             content=form.content.data
         )
         session.add(wiki_post)
