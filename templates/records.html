@@ -18,9 +18,9 @@
     {% if current_user.id %}
         <div>
             <a href="/create_comment/{{item.id}}/0" class="btn btn-primary">Комментировать</a>
-            {% if current_user.id == item.user_id %}
-                <a href="/refactor_news/{{item.id}}" class="btn btn-primary">Изменить</a>
-                <a href="/delete_news/{{item.id}}" class="btn btn-danger">Удалить</a>
+            {% if current_user == item.user %}
+                <a href="/refactor/News/{{item.id}}" class="btn btn-primary">Изменить</a>
+                <a href="/delete/News/{{item.id}}" class="btn btn-danger">Удалить</a>
             {% endif %}
         </div>
     {% endif %}
@@ -33,16 +33,16 @@
                 <h5 class="mt-0"><a href="/profile/{{comment.user_id}}" style="color: #000000;">
                     {{comment.user.name}}
                     {% if comment.user.status == "admin" %}
-                        <span class="badge badge-warning">Модератор</span>
+                        <span class="badge badge-warning" style="color: #ffffff">Модератор</span>
                     {% elif comment.user.status == "develop" %}
                         <span class="badge badge-danger">Разработчик</span>
                     {% endif %}
                 </a></h5>
                 {{comment.content}}
                 <div>
-                    {% if current_user.id == item.user_id %}
-                        <a href="/refactor_comment/{{comment.id}}" class="btn btn-primary">Изменить</a>
-                        <a href="/delete_comment/{{comment.id}}" class="btn btn-danger">Удалить</a>
+                    {% if current_user == item.user %}
+                        <a href="/refactor/Comment/{{comment.id}}" class="btn btn-primary">Изменить</a>
+                        <a href="/delete/Comment/{{comment.id}}" class="btn btn-danger">Удалить</a>
                     {% endif %}
                 </div>
             </div>

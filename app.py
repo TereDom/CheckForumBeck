@@ -9,7 +9,6 @@ from data.refactore_image import refactor_image
 from data.__all_forms import *
 from data.__all_models import *
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
@@ -83,7 +82,7 @@ def records():
     return render_template("records.html", news=news, comments=comments)
 
 
-@app.route('/create_news',  methods=['GET', 'POST'])
+@app.route('/create_news', methods=['GET', 'POST'])
 def create_news():
     form = NewsForm()
 
@@ -108,49 +107,74 @@ def create_news():
     return render_template(**param)
 
 
-@app.route('/refactor_news/<news_id>', methods=['GET', 'POST'])
-def refactor_news(news_id):
-    form = NewsForm()
+@app.route('/refactor/<type>/<item_id>', methods=['GET', 'POST'])
+def refactor(type, item_id):
+    form = eval(type + 'Form()')
     session = db_session.create_session()
 
-    news = session.query(News).filter(News.id == news_id).first()
-
+    item = session.query(eval(type)).filter(eval(type).id == item_id).first()
     param = dict()
-    param['title'] = 'Изменение новости'
-    param['style_way'] = url_for('static', filename='css/style.css')
-    param['form'] = form
-    param['template_name_or_list'] = 'news.html'
-    param['back_way'] = '/forum'
+
+    if not item:
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Данная запись не найдена'
+        return render_template(**param)
+
+    if item.user != current_user:
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Отказано в доступе'
+        return render_template(**param)
 
     if form.validate_on_submit():
-        news.title = form.title.data
-        news.content = form.content.data
-        news.created_date = datetime.datetime.now()
+        item.content = form.content.data
+        item.created_date = datetime.datetime.now()
+        if type == 'News':
+            item.title = form.title.data
 
         session.commit()
 
         return redirect('/forum')
 
-    form.title.data = news.title
-    form.content.data = news.content
+    param['title'] = 'Изменение ' + 'новости' if type == 'News' else 'комментария'
+    param['style_way'] = url_for('static', filename='css/style.css')
+    param['form'] = form
+    param['template_name_or_list'] = type.lower() + '.html'
+    param['back_way'] = '/forum'
+
+    if type == 'News':
+        form.title.data = item.title
+    form.content.data = item.content
 
     return render_template(**param)
 
 
-@app.route('/delete_news/<news_id>')
-def delete_news(news_id):
+@app.route('/delete/<type>/<item_id>')
+def delete(type, item_id):
     session = db_session.create_session()
-    news = session.query(News).filter(News.id == news_id).first()
-    session.delete(news)
-    comments = session.query(Comment).filter(Comment.news_id == news_id)
-    for item in comments:
-        session.delete(item)
+    item = session.query(eval(type)).filter(eval(type).id == item_id).first()
+    param = dict()
+
+    if not item:
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Данная запись не найдена'
+        return render_template(**param)
+
+    if item.user_id != current_user.id and current_user.status != 'admin':
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Отказано в доступе'
+        return render_template(**param)
+
+    session.delete(item)
+    if type == 'News':
+        comments = session.query(Comment).filter(Comment.news_id == item_id)
+        for item in comments:
+            session.delete(item)
     session.commit()
     return redirect('/forum')
 
 
 @app.route('/create_comment/<news_id>/<user_id>', methods=['GET', 'POST'])
-def create_comment(news_id, user_id):
+def create(news_id, user_id):
     form = CommentForm()
 
     param = dict()
@@ -172,52 +196,6 @@ def create_comment(news_id, user_id):
         session.commit()
         return redirect('/forum')
     return render_template(**param)
-
-
-@app.route('/refactor_comment/<comment_id>', methods=['GET', 'POST'])
-def refactor_comment(comment_id):
-    form = CommentForm()
-    session = db_session.create_session()
-
-    comment = session.query(Comment).filter(Comment.id == comment_id).first()
-
-    param = dict()
-    param['title'] = 'Изменение комментария'
-    param['style_way'] = url_for('static', filename='css/style.css')
-    param['form'] = form
-    param['template_name_or_list'] = 'comment.html'
-    param['back_way'] = '/forum'
-
-    if form.validate_on_submit():
-        comment.content = form.content.data
-
-        session.commit()
-        return redirect('/forum')
-
-    form.content.data = comment.content
-
-    return render_template(**param)
-
-
-@app.route('/delete_comment/<comment_id>')
-def delete_comment(comment_id):
-    session = db_session.create_session()
-    comment = session.query(Comment).filter(Comment.id == comment_id).first()
-    param = dict()
-
-    if comment.user != current_user:
-        param['template_file_or_list'] = 'access_error.html'
-        param['title'] = ''
-        return render_template(**param)
-
-    if not comment:
-        param['template_file_or_list'] = 'error.html'
-        param['title'] = ''
-        return render_template(**param)
-
-    session.delete(comment)
-    session.commit()
-    return redirect('/forum')
 
 
 @app.route('/wiki', methods=['GET', 'POST', 'DELETE', 'PUT'])
@@ -255,6 +233,37 @@ def profile(user_id):
     param['template_name_or_list'] = 'profile.html'
 
     return render_template(**param)
+
+
+@app.route('/make/<type>/<user_id>')
+def make(type, user_id):
+    param = dict()
+    session = db_session.create_session()
+    user = session.query(User).filter(User.id == user_id).first()
+
+    if not user:
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Пользователь не найден'
+        return render_template(**param)
+
+    if type == 'user' and (user.status == 'develop' and current_user.status != 'develop' or
+                           user.status == 'admin' and current_user.status not in ('develop', 'admin')):
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Отказано в доступе'
+        return render_template(**param)
+    elif type == 'admin' and (user.status == 'develop' and current_user.status != 'develop' or
+                              user.status == 'user' and current_user.status not in ('develop', 'admin')):
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Отказано в доступе'
+        return render_template(**param)
+    elif type == 'develop' and user.status in ('user', 'admin') and current_user.status != 'develop':
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Отказано в доступе'
+        return render_template(**param)
+
+    user.status = type
+    session.commit()
+    return redirect(f'/profile/{user_id}')
 
 
 if __name__ == '__main__':

@@ -12,7 +12,7 @@
                 <li class="list-group-item">
                     Статус пользователя:
                     {% if user.status == "admin" %}
-                        <span class="badge badge-warning">Модератор</span>
+                        <span class="badge badge-warning" style="color: #ffffff">Модератор</span>
                     {% elif user.status == "develop" %}
                         <span class="badge badge-danger">Разработчик</span>
                     {% else %}
@@ -21,6 +21,25 @@
                 </li>
                 {% if user.vk_id%}
                     <li class="list-group-item">VK id: {{user.vk_id}}</li>
+                {% endif %}
+                {% if current_user.status != 'user' and current_user != user %}
+                    <li class="list-group-item">
+                        Назначить:<br>
+                        <div class="btn-group">
+                            {% if current_user.status == 'develop' and user.status == 'admin' %}
+                                <a class="btn btn-primary" style="color: #ffffff" href="/make/user/{{user.id}}">Пользователем</a>
+                            {% else %}
+                                <a class="btn btn-warning" style="color: #ffffff" href="/make/admin/{{user.id}}">Модератором</a>
+                            {% endif %}
+                            {% if current_user.status == 'develop' %}
+                                {% if user.status == 'develop' %}
+                                    <a class="btn btn-primary" style="color: #ffffff" href="/make/user/{{user.id}}">Пользователем</a>
+                                {% else %}
+                                    <a class="btn btn-danger" style="color: #ffffff" href="/make/develop/{{user.id}}">Разработчиком</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </li>
                 {% endif %}
             </ul>
         </div>
@@ -50,7 +69,7 @@
                         <h5 class="mt-0"><a href="/profile/{{comment.user_id}}" style="color: #000000;">
                             {{comment.user.name}}
                             {% if comment.user.status == "admin" %}
-                                <span class="badge badge-warning">Модератор</span>
+                                <span class="badge badge-warning" style="color: #ffffff">Модератор</span>
                             {% elif comment.user.status == "develop" %}
                                 <span class="badge badge-danger">Разработчик</span>
                             {% endif %}

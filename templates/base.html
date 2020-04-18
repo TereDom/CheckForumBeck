@@ -13,7 +13,11 @@
 <body>
 <header>
     <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="#">CheckBeck.site</a>
+        <a class="navbar-brand" href="/">CheckBeck.site</a>
+        <div class="btn-group">
+            <a href="/forum" class="btn btn-dark">Форум</a>
+            <a href="/wiki" class="btn btn-dark">Вики</a>
+        </div>
         {% if current_user.is_authenticated %}
             <p>
                 <img src="{{current_user.avatar}}" class="mr-3" alt="Аватар" height="32px">
