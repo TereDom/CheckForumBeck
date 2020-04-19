@@ -26,10 +26,16 @@
                     <li class="list-group-item">
                         Назначить:<br>
                         <div class="btn-group">
-                            {% if current_user.status == 'develop' and user.status == 'admin' %}
-                                <a class="btn btn-primary" style="color: #ffffff" href="/make/user/{{user.id}}">Пользователем</a>
-                            {% else %}
-                                <a class="btn btn-warning" style="color: #ffffff" href="/make/admin/{{user.id}}">Модератором</a>
+                            {% if current_user.status == 'develop' %}
+                                {% if user.status == 'admin' %}
+                                    <a class="btn btn-primary" style="color: #ffffff" href="/make/user/{{user.id}}">
+                                        Пользователем
+                                    </a>
+                                {% else %}
+                                    <a class="btn btn-warning" style="color: #ffffff" href="/make/admin/{{user.id}}">
+                                        Модератором
+                                    </a>
+                                {% endif %}
                             {% endif %}
                             {% if current_user.status == 'develop' %}
                                 {% if user.status == 'develop' %}
@@ -57,7 +63,7 @@
             </div>
             {% if current_user.id %}
                 <div>
-                    <a href="/create_comment/{{item.id}}/{{user.id}}" class="btn btn-primary">Комментировать</a>
+                    <a href="/create_comment/{{item.id}}/{{user.id}}" class="btn btn-primary"><i class="fa fa-commenting"></i> Комментировать</a>
                 </div>
             {% endif %}
             <h3>Комментарии</h3>

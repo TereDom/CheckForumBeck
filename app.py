@@ -174,7 +174,7 @@ def delete(type, item_id):
 
 
 @app.route('/create_comment/<news_id>/<user_id>', methods=['GET', 'POST'])
-def create(news_id, user_id):
+def create_comment(news_id, user_id):
     form = CommentForm()
 
     param = dict()

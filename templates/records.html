@@ -17,17 +17,17 @@
     </div>
     {% if current_user.id %}
         <div>
-            <a href="/create_comment/{{item.id}}/0" class="btn btn-primary">Комментировать</a>
+            <a href="/create_comment/{{item.id}}/0" class="btn btn-primary"><i class="fa fa-commenting"></i> Комментировать</a>
             {% if current_user == item.user %}
-                <a href="/refactor/News/{{item.id}}" class="btn btn-primary">Изменить</a>
-                <a href="/delete/News/{{item.id}}" class="btn btn-danger">Удалить</a>
+                <a href="/refactor/News/{{item.id}}" class="btn btn-primary"><i class="fa fa-pencil"></i> Изменить</a>
+                <a href="/delete/News/{{item.id}}" class="btn btn-danger"><i class="fa fa-trash"></i> Удалить</a>
             {% endif %}
         </div>
     {% endif %}
     <h3>Комментарии</h3>
     {% for comment in comments %}
     {% if comment.news_id == item.id %}
-        <div class="media">
+        <div class="media border rounded" style="margin: 10px;">
             <img src="{{comment.user.avatar}}" class="mr-3" alt="Аватар" height="64px">
             <div class="media-body">
                 <h5 class="mt-0"><a href="/profile/{{comment.user_id}}" style="color: #000000;">
@@ -40,9 +40,11 @@
                 </a></h5>
                 {{comment.content}}
                 <div>
-                    {% if current_user == item.user %}
-                        <a href="/refactor/Comment/{{comment.id}}" class="btn btn-primary">Изменить</a>
-                        <a href="/delete/Comment/{{comment.id}}" class="btn btn-danger">Удалить</a>
+                    {% if current_user == comment.user %}
+                        <a href="/refactor/Comment/{{comment.id}}" class="btn btn-primary"><i class="fa fa-pencil fa-fw"></i> Изменить</a>
+                    {% endif %}
+                    {% if current_user.status == 'admin' and comment.user.status == 'user' or current_user == comment.user %}
+                        <a href="/delete/Comment/{{comment.id}}" class="btn btn-danger"><i class="fa fa-trash"></i> Удалить</a>
                     {% endif %}
                 </div>
             </div>
