@@ -5,7 +5,13 @@
 {% for item in wiki_base %}
 <div class="col-md6 border rounded">
     {% if item.status == status %}
-        <h3>{{item.title}}</h3>
+        <h3>
+            {{item.title}}
+            {% if current_user.status == 'develop' %}
+                <a class="btn btn-primary" style="color: #ffffff"><i class="fa fa-pencil"></i></a>
+                <a class="btn btn-danger" style="color: #ffffff"><i class="fa fa-trash"></i></a>
+            {% endif %}
+        </h3>
         <img src=..\static\img\wiki\{{item.img}} width="110" height="110">
         <h5>{{item.text}}</h5>
     {% endif %}
