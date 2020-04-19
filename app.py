@@ -6,6 +6,8 @@ from flask_login import login_user, LoginManager, current_user, logout_user, log
 from werkzeug.utils import redirect
 from data.refactore_image import refactor_image
 
+
+from data import db_session
 from data.__all_forms import *
 from data.__all_models import *
 
@@ -73,7 +75,6 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-@app.route('/')
 @app.route('/forum', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def records():
     session = db_session.create_session()
@@ -200,15 +201,93 @@ def create_comment(news_id, user_id):
 
 @app.route('/wiki', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def wiki():
-    return render_template('general_wiki.html')
+    return render_template('general_wiki.html', title='Энциклопедия CheckBeck',
+                           status=current_user.status)
+
+
+@app.route('/wiki/new_wiki', methods=['GET', 'POST'])
+def create_new_wiki():
+    form = NewWikiPostForm()
+    if form.validate_on_submit():
+        img = form.image.data
+        file_way = os.getcwd() + f'\\static\\img\\wiki\\{img.filename}'
+        img.save(file_way)
+        print(img.filename)
+        if form.status.data not in ['monster', 'object', 'weapon']:
+            return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
+                                   form=form, massage='Не существующий тип объекта')
+        session = db_session.create_session()
+        wiki_post = NewWikiPostForm(
+            title=form.title.data,
+            status=form.status.data,
+            image=img.filename,
+            content=form.content.data
+        )
+        session.add(wiki_post)
+        session.commit()
+        return redirect('/wiki')
+    return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
+                           form=form, massage='')
+
+
+@app.route('/wiki/delete_post/<post_id>')
+def delete_post(post_id):
+    # param = dict()
+    # if current_user.status != 'develop':
+    #     param['template_name_or_list'] = 'error.html'
+    #     param['content'] = 'Отказано в доступе'
+    #     param['from'] = '/wiki'
+    #     return render_template(**param)
+    session = db_session.create_session()
+    post = session.query(WikiDB).filter(WikiDB.id == post_id).first()
+    # if not post:
+    #     param['template_name_or_list'] = 'error.html'
+    #     param['content'] = 'Запись не найдена'
+    #     param['from'] = '/wiki'
+    #     return render_template(**param)
+    status = post.status
+    session.delete(post)
+    session.commit()
+    return redirect(f'/wiki/{status}')
 
 
 @app.route('/wiki/<status>')
 def print_wiki(status):
     session = db_session.create_session()
     wiki_base = session.query(WikiDB)
-    return render_template('wiki.html', title='Энциклопедия CheckBeck',
+    return render_template('wiki.html', title=f'Энциклопедия CheckBeck - {status}',
                            wiki_base=wiki_base, status=status)
+
+
+@app.route('/refactor_wii_post/<post_id>')
+def refactor_wiki_post(post_id):
+    form = WikiPostForm()
+    session = db_session.create_session()
+    wiki_post = session.query(WikiDB).filter(WikiDB.id == post_id)
+    param = dict()
+
+    # if current_user.status != 'develop':
+    #     param['template_name_or_list'] = 'error.html'
+    #     param['content'] = 'Отказано в доступе'
+    #     param['from'] = '/wiki'
+    #     return render_template(**param)
+    #
+    # if not wiki_post:
+    #     param['template_name_or_list'] = 'error.html'
+    #     param['content'] = 'Запись не найдена'
+    #     param['from'] = '/wiki'
+    #     return render_template(**param)
+
+    form.title.data = wiki_post.title
+    form.content.data = wiki_post.text
+    form.status.data = wiki_post.status
+
+    param['template_name_or_list'] = 'create_new_wiki.html'
+    param['title'] = 'Изменить новость'
+    param['form'] = form
+    param['style_way'] = url_for('static', filename='css/style.css')
+
+    return render_template(**param)
 
 
 @app.route('/logout')

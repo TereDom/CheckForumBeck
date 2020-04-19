@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="post" enctype=multipart/form-data>
+    <h1>{{title}}</h1>
+    {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+
+    <p>
+        {{ form.title.label }}<br>
+        {{ form.title(class="form-control") }}<br>
+        {% for error in form.title.errors %}
+        <p title="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+    </p>
+
+    <p>
+    {{ form.status.label }}<br>
+        {{ form.status(class="form-control") }}<br>
+        {% for error in form.status.errors %}
+        <p title="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.image.label }}<br>
+        {{ form.image(class="form-control-file") }}<br>
+        {% for error in form.image.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+    </p>
+
+    <p>
+        {{ form.content.label }}<br>
+        {{ form.content(class="form-control") }}<br>
+        {% for error in form.content.errors %}
+        <p title="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+    </p>
+
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{ massage }}
+</form>
+{% endblock %}
