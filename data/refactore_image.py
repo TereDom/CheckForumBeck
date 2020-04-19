@@ -18,6 +18,6 @@ def refactor_image(image_name):
 
     for i in range(x0, x1 + 1):
         for j in range(y0, y1 + 1):
-            new_pixels[i - x0, j - y0] = pixels[i, j]
+            new_pixels[i - x0 + 1, j - y0 + 1] = pixels[i, j]
 
     new_image.save(image_name)

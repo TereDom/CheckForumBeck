@@ -1,7 +1,6 @@
 import os
 import datetime
 from flask import Flask, render_template, url_for
-from data import db_session
 from flask_login import login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.utils import redirect
 from data.refactore_image import refactor_image
@@ -119,11 +118,13 @@ def refactor(type, item_id):
     if not item:
         param['template_name_or_list'] = 'error.html'
         param['content'] = 'Данная запись не найдена'
+        param['from'] = '/forum'
         return render_template(**param)
 
     if item.user != current_user:
         param['template_name_or_list'] = 'error.html'
         param['content'] = 'Отказано в доступе'
+        param['from'] = '/forum'
         return render_template(**param)
 
     if form.validate_on_submit():
@@ -158,11 +159,13 @@ def delete(type, item_id):
     if not item:
         param['template_name_or_list'] = 'error.html'
         param['content'] = 'Данная запись не найдена'
+        param['from'] = '/forum'
         return render_template(**param)
 
     if item.user_id != current_user.id and current_user.status != 'admin':
         param['template_name_or_list'] = 'error.html'
         param['content'] = 'Отказано в доступе'
+        param['from'] = '/forum'
         return render_template(**param)
 
     session.delete(item)
@@ -207,7 +210,7 @@ def wiki():
 
 @app.route('/wiki/new_wiki', methods=['GET', 'POST'])
 def create_new_wiki():
-    form = NewWikiPostForm()
+    form = WikiPostForm()
     if form.validate_on_submit():
         img = form.image.data
         file_way = os.getcwd() + f'\\static\\img\\wiki\\{img.filename}'
@@ -217,11 +220,11 @@ def create_new_wiki():
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
                                    form=form, massage='Не существующий тип объекта')
         session = db_session.create_session()
-        wiki_post = NewWikiPostForm(
+        wiki_post = WikiDB(
             title=form.title.data,
             status=form.status.data,
             image=img.filename,
-            content=form.content.data
+            text=form.content.data
         )
         session.add(wiki_post)
         session.commit()
@@ -232,19 +235,19 @@ def create_new_wiki():
 
 @app.route('/wiki/delete_post/<post_id>')
 def delete_post(post_id):
-    # param = dict()
-    # if current_user.status != 'develop':
-    #     param['template_name_or_list'] = 'error.html'
-    #     param['content'] = 'Отказано в доступе'
-    #     param['from'] = '/wiki'
-    #     return render_template(**param)
+    param = dict()
+    if current_user.status != 'develop':
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Отказано в доступе'
+        param['from'] = '/wiki'
+        return render_template(**param)
     session = db_session.create_session()
     post = session.query(WikiDB).filter(WikiDB.id == post_id).first()
-    # if not post:
-    #     param['template_name_or_list'] = 'error.html'
-    #     param['content'] = 'Запись не найдена'
-    #     param['from'] = '/wiki'
-    #     return render_template(**param)
+    if not post:
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Запись не найдена'
+        param['from'] = '/wiki'
+        return render_template(**param)
     status = post.status
     session.delete(post)
     session.commit()
@@ -266,17 +269,17 @@ def refactor_wiki_post(post_id):
     wiki_post = session.query(WikiDB).filter(WikiDB.id == post_id)
     param = dict()
 
-    # if current_user.status != 'develop':
-    #     param['template_name_or_list'] = 'error.html'
-    #     param['content'] = 'Отказано в доступе'
-    #     param['from'] = '/wiki'
-    #     return render_template(**param)
-    #
-    # if not wiki_post:
-    #     param['template_name_or_list'] = 'error.html'
-    #     param['content'] = 'Запись не найдена'
-    #     param['from'] = '/wiki'
-    #     return render_template(**param)
+    if current_user.status != 'develop':
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Отказано в доступе'
+        param['from'] = '/wiki'
+        return render_template(**param)
+
+    if not wiki_post:
+        param['template_name_or_list'] = 'error.html'
+        param['content'] = 'Запись не найдена'
+        param['from'] = '/wiki'
+        return render_template(**param)
 
     form.title.data = wiki_post.title
     form.content.data = wiki_post.text
