@@ -3,7 +3,7 @@ from wtforms import StringField, FileField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
 
 
-class NewWikiPostForm(FlaskForm):
+class WikiPostForm(FlaskForm):
     title = StringField('Заголовок поста', validators=[DataRequired()])
     status = StringField('Тип объекта', validators=[DataRequired()])
     image = FileField('Загрузить изображение', validators=[DataRequired()])

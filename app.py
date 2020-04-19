@@ -217,6 +217,37 @@ def print_wiki(status):
                            wiki_base=wiki_base, status=status)
 
 
+@app.route('/refactor_wii_post/<post_id>')
+def refactor_wiki_post(post_id):
+    form = WikiPostForm()
+    session = db_session.create_session()
+    wiki_post = session.query(WikiDB).filter(WikiDB.id == post_id)
+    param = dict()
+
+    # if current_user.status != 'develop':
+    #     param['template_name_or_list'] = 'error.html'
+    #     param['content'] = 'Отказано в доступе'
+    #     param['from'] = '/wiki'
+    #     return render_template(**param)
+    #
+    # if not wiki_post:
+    #     param['template_name_or_list'] = 'error.html'
+    #     param['content'] = 'Запись не найдена'
+    #     param['from'] = '/wiki'
+    #     return render_template(**param)
+
+    form.title.data = wiki_post.title
+    form.content.data = wiki_post.text
+    form.status.data = wiki_post.status
+
+    param['template_name_or_list'] = 'create_new_wiki.html'
+    param['title'] = 'Изменить новость'
+    param['form'] = form
+    param['style_way'] = url_for('static', filename='css/style.css')
+
+    return render_template(**param)
+
+
 @app.route('/logout')
 @login_required
 def logout():
