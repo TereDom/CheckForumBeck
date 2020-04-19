@@ -209,6 +209,27 @@ def create_new_wiki():
                            form=form, massage='')
 
 
+@app.route('/wiki/delete_post/<post_id>')
+def delete_post(post_id):
+    # param = dict()
+    # if current_user.status != 'develop':
+    #     param['template_name_or_list'] = 'error.html'
+    #     param['content'] = 'Отказано в доступе'
+    #     param['from'] = '/wiki'
+    #     return render_template(**param)
+    session = db_session.create_session()
+    post = session.query(WikiDB).filter(WikiDB.id == post_id).first()
+    # if not post:
+    #     param['template_name_or_list'] = 'error.html'
+    #     param['content'] = 'Запись не найдена'
+    #     param['from'] = '/wiki'
+    #     return render_template(**param)
+    status = post.status
+    session.delete(post)
+    session.commit()
+    return redirect(f'/wiki/{status}')
+
+
 @app.route('/wiki/<status>')
 def print_wiki(status):
     session = db_session.create_session()
