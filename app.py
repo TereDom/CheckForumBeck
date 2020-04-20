@@ -5,6 +5,11 @@ from flask_login import login_user, LoginManager, current_user, logout_user, log
 from werkzeug.utils import redirect
 from data.refactore_image import refactor_image
 
+from data.LoginForm import LoginForm
+from data.RegisterForm import RegisterForm
+from data.__all_models import User, WikiDB
+from data.NewsForm import NewsForm
+from vk_bot import bot
 
 from data import db_session
 from data.__all_forms import *
@@ -108,6 +113,7 @@ def create_news():
         session.merge(current_user)
         session.add(news)
         session.commit()
+        bot("new_record")
         return redirect('/forum')
     return render_template(**param)
 
@@ -203,6 +209,10 @@ def create_comment(news_id, user_id):
         session.merge(current_user)
         session.add(comment)
         session.commit()
+
+        user_id = session.query(News).filter(News.id == news_id).first().user_id
+        recipient = session.query(User).filter(User.id == user_id).first()
+        bot('new_comment', recipient=recipient)
         return redirect('/forum')
     return render_template(**param)
 
