@@ -74,6 +74,11 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
+@app.route('/')
+def main_page():
+    return render_template('main.html')
+
+
 @app.route('/forum', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def records():
     session = db_session.create_session()
@@ -262,7 +267,7 @@ def print_wiki(status):
                            wiki_base=wiki_base, status=status)
 
 
-@app.route('/refactor_wii_post/<post_id>')
+@app.route('/refactor_wiki_post/<post_id>')
 def refactor_wiki_post(post_id):
     form = WikiPostForm()
     session = db_session.create_session()
