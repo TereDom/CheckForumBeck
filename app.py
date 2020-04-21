@@ -1,19 +1,18 @@
+import logging
 import os
 import datetime
 from flask import Flask, render_template, url_for
 from flask_login import login_user, LoginManager, current_user, logout_user, login_required
+
 from werkzeug.utils import redirect
 from data.refactore_image import refactor_image
 
-from data.LoginForm import LoginForm
-from data.RegisterForm import RegisterForm
-from data.__all_models import User, WikiDB
-from data.NewsForm import NewsForm
 from vk_bot import bot
 
 from data import db_session
 from data.__all_forms import *
 from data.__all_models import *
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -72,11 +71,24 @@ def login():
         user = session.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect('/forum')
+            return redirect('/')
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/forget', methods=['GET', 'POST'])
+def forget_password():
+    form = ForgetForm()
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        emails = [user.email for user in session.query(User)]
+        if form.email.data in emails:
+
+            return redirect('/create_password')
+    return render_template('forget_password.html', form=form)
+
 
 
 @app.route('/')
@@ -211,8 +223,9 @@ def create_comment(news_id, user_id):
         session.commit()
 
         user_id = session.query(News).filter(News.id == news_id).first().user_id
-        recipient = session.query(User).filter(User.id == user_id).first()
-        bot('new_comment', recipient=recipient)
+        if current_user.id != user_id:
+            recipient = session.query(User).filter(User.id == user_id).first()
+            bot('new_comment', recipient=recipient)
         return redirect('/forum')
     return render_template(**param)
 
