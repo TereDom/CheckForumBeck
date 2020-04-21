@@ -1,8 +1,10 @@
+import smtplib as smtp
 import logging
 import os
 import datetime
 from flask import Flask, render_template, url_for
 from flask_login import login_user, LoginManager, current_user, logout_user, login_required
+import random
 
 from werkzeug.utils import redirect
 from data.refactore_image import refactor_image
@@ -85,9 +87,31 @@ def forget_password():
         session = db_session.create_session()
         emails = [user.email for user in session.query(User)]
         if form.email.data in emails:
+            code = str([random.randint() for _ in range(6)])
+            server = smtp.SMTP_SSL('smtp.yandex.com')
+            server.login('checkbeckofficial.mail.ru', 'yandexlyceum')
+            server.auth_plain()
+            server.sendmail('checkbeckofficial.mail.ru', form.email.data.replace('@', '.'),
+                            f'Ваш пресональный код для смены пароля: {code}')
+            server.quit()
 
-            return redirect('/create_password')
+            return redirect(f'/create_password/{code}/{form.email.data}')
     return render_template('forget_password.html', form=form)
+
+
+@app.route('/create_password/<code>/<email>',  methods=['GET', 'POST'])
+def create_password(code, email):
+    form = CodeForm()
+    if form.validate_on_submit():
+        if code == form.code.data and form.password.data == form.password_again.data:
+            session = db_session.create_session()
+            user = session.query(User).filter(User.email == email).first()
+            user.set_password(form.password.data)
+            login_user(user)
+            return redirect('/login')
+        return redirect('/create_password/<code>/<email>')
+    return render_template('create_password.html', form=form)
+
 
 
 
