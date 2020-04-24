@@ -5,10 +5,6 @@ from flask_login import login_user, LoginManager, current_user, logout_user, log
 from werkzeug.utils import redirect
 from data.refactore_image import refactor_image
 
-from data.LoginForm import LoginForm
-from data.RegisterForm import RegisterForm
-from data.__all_models import User, WikiDB
-from data.NewsForm import NewsForm
 from vk_bot import bot
 
 from data import db_session
@@ -23,7 +19,8 @@ db_session.global_init('db/DataBase.sqlite')
 
 
 def main():
-    app.run(port=8000, host='127.0.0.1')
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
 
 
 @login_manager.user_loader
@@ -72,7 +69,7 @@ def login():
         user = session.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect('/forum')
+            return redirect('/')
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
@@ -220,7 +217,7 @@ def create_comment(news_id, user_id):
 @app.route('/wiki', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def wiki():
     return render_template('general_wiki.html', title='Энциклопедия CheckBeck',
-                           status=current_user.status)
+                           status=current_user.status if type(current_user) == User else 'user')
 
 
 @app.route('/wiki/new_wiki', methods=['GET', 'POST'])
@@ -230,7 +227,6 @@ def create_new_wiki():
         img = form.image.data
         file_way = os.getcwd() + f'\\static\\img\\wiki\\{img.filename}'
         img.save(file_way)
-        print(img.filename)
         if form.status.data not in ['monster', 'object', 'weapon']:
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
                                    form=form, massage='Не существующий тип объекта')
@@ -283,7 +279,6 @@ def refactor_wiki_post(post_id):
     session = db_session.create_session()
     wiki_post = session.query(WikiDB).filter(WikiDB.id == post_id)
     param = dict()
-
     if current_user.status != 'develop':
         param['template_name_or_list'] = 'error.html'
         param['content'] = 'Отказано в доступе'
