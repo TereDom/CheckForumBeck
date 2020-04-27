@@ -362,5 +362,4 @@ def make(type, user_id):
     return redirect(f'/profile/{user_id}')
 
 
-if __name__ == '__main__':
-    main()
+main()
