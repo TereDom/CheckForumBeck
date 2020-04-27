@@ -1,3 +1,4 @@
+import logging
 import os
 import datetime
 from flask import Flask, render_template, url_for
@@ -19,6 +20,7 @@ db_session.global_init('db/DataBase.sqlite')
 
 
 def main():
+    logging.info('Приложение запущено')
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
 
