@@ -1,3 +1,7 @@
+pillow
+wtforms
+werkzeug
+sqlalchemy
 flask
 flask_login
 vk_api
