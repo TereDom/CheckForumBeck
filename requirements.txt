@@ -4,4 +4,5 @@ werkzeug
 sqlalchemy
 flask
 flask_login
+flask_wtf
 vk_api
