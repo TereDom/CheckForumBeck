@@ -18,6 +18,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 db_session.global_init('db/DataBase.sqlite')
 
+logging.basicConfig(filename='example.log')
+
 
 def main():
     logging.info('Приложение запущено')
