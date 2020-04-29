@@ -6,7 +6,6 @@ import random
 
 
 def bot(status, recipient=None):
-
     vk_session = vk_api.VkApi(
         token='38eaceba8f2e4284f487793011452e4d7cd637cffbb11605b451d3cf71b1fdf2628793ef25cd0b4f8a0ad')
     vk = vk_session.get_api()
@@ -20,13 +19,17 @@ def bot(status, recipient=None):
         recipients = [recipient]
     else:
         recipients = session.query(User)
-
+    print(recipients)
     for elem in recipients:
+        print(elem.vk_id)
         if len(str(elem.vk_id)):
-            vk.messages.send(user_id=vk.users.get(user_ids=[elem.vk_id])[0]['id'],
-                             message=f'{messages[status]} \n http://127.0.0.1:8000/forum',
-                             random_id=random.randint(0, 2 ** 64))
+            try:
+                vk.messages.send(user_id=vk.users.get(user_ids=[elem.vk_id])[0]['id'],
+                                 message=f'{messages[status]} \n http://127.0.0.1:8000/forum',
+                                 random_id=random.randint(0, 2 ** 64))
+            except:
+                pass
 
 
 if __name__ == '__main__':
-    bot()
+    bot('new_record')

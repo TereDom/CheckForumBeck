@@ -10,15 +10,16 @@
           crossorigin="anonymous">
     <link rel="stylesheet" href="{{style_way}}">
     <title>{{title}}</title>
+    <style>
+        body {
+            background: url(static/img/bg.jpg);
+        }
+  </style>
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-light bg-light">
+    <nav class="navbar">
         <a class="navbar-brand" href="/">CheckBeck.site</a>
-        <div class="btn-group">
-            <a href="/forum" class="btn btn-dark">Форум</a>
-            <a href="/wiki" class="btn btn-dark">Вики</a>
-        </div>
         {% if current_user.is_authenticated %}
             <p>
                 <img src="{{current_user.avatar}}" class="mr-3" alt="Аватар" height="32px">
@@ -38,7 +39,7 @@
     {% block content %}{% endblock %}
 </main>
 <footer>
-    <ul class="nav justify-content-center bg-light" style="margin: 10px;">
+    <ul class="nav justify-content-center" style="margin: 10px;">
         <li class="nav-item" style="margin: 10px;">
             <a class="btn btn-primary" href="#"><i class="fa fa-download"></i> Скачать игру</a>
         </li>
