@@ -8,8 +8,8 @@
         <h3>
             {{item.title}}
             {% if current_user.status == 'develop' %}
-                <a class="btn btn-primary" style="color: #ffffff" href="/refactor_wiki_post/{{item.id}}"><i class="fa fa-pencil"></i></a>
-                <a class="btn btn-danger" style="color: #ffffff" href="/wiki/delete_post/{{item.id}}"><i class="fa fa-trash"></i></a>
+                <a class="btn btn-primary" style="color: #ffffff" href="/refactor_wiki_post&{{item.id}}"><i class="fa fa-pencil"></i></a>
+                <a class="btn btn-danger" style="color: #ffffff" href="/wiki/delete_post&{{item.id}}"><i class="fa fa-trash"></i></a>
             {% endif %}
         </h3>
         <img src=..\static\img\wiki\{{item.image}} height="110">

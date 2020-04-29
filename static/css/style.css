@@ -1,3 +1,7 @@
 .badge-warning{
     color: #ffffff;
 }
+
+body {
+    background: url(/static/img/bg.jpg);
+}

@@ -24,7 +24,7 @@ logging.basicConfig(filename='example.log')
 def main():
     logging.info('Приложение запущено')
     # port = int(os.environ.get("PORT", 5000))
-    app.run(host='127.0.0.1', port=8000)
+    app.run(host='127.0.0.1', port=5000)
 
 
 @login_manager.user_loader
@@ -119,7 +119,7 @@ def create_news():
     return render_template(**param)
 
 
-@app.route('/refactor/<type>/<item_id>', methods=['GET', 'POST'])
+@app.route('/refactor&<type>&<item_id>', methods=['GET', 'POST'])
 def refactor(type, item_id):
     form = eval(type + 'Form()')
     session = db_session.create_session()
@@ -162,7 +162,7 @@ def refactor(type, item_id):
     return render_template(**param)
 
 
-@app.route('/delete/<type>/<item_id>')
+@app.route('/delete&<type>&<item_id>')
 def delete(type, item_id):
     session = db_session.create_session()
     item = session.query(eval(type)).filter(eval(type).id == item_id).first()
@@ -189,7 +189,7 @@ def delete(type, item_id):
     return redirect('/forum')
 
 
-@app.route('/create_comment/<news_id>/<user_id>', methods=['GET', 'POST'])
+@app.route('/create_comment&<news_id>&<user_id>', methods=['GET', 'POST'])
 def create_comment(news_id, user_id):
     form = CommentForm()
 
@@ -224,7 +224,7 @@ def wiki():
                            status=current_user.status if type(current_user) == User else 'user')
 
 
-@app.route('/wiki/new_wiki', methods=['GET', 'POST'])
+@app.route('/wiki&new_wiki', methods=['GET', 'POST'])
 def create_new_wiki():
     form = WikiPostForm()
     if form.validate_on_submit():
@@ -248,7 +248,7 @@ def create_new_wiki():
                            form=form, massage='')
 
 
-@app.route('/wiki/delete_post/<post_id>')
+@app.route('/wiki&delete_post&<post_id>')
 def delete_post(post_id):
     param = dict()
     if current_user.status != 'develop':
@@ -266,10 +266,10 @@ def delete_post(post_id):
     status = post.status
     session.delete(post)
     session.commit()
-    return redirect(f'/wiki/{status}')
+    return redirect(f'/wiki&{status}')
 
 
-@app.route('/wiki/<status>')
+@app.route('/wiki&<status>')
 def print_wiki(status):
     session = db_session.create_session()
     wiki_base = session.query(WikiDB)
@@ -277,7 +277,7 @@ def print_wiki(status):
                            wiki_base=wiki_base, status=status)
 
 
-@app.route('/refactor_wiki_post/<post_id>')
+@app.route('/refactor_wiki_post&<post_id>')
 def refactor_wiki_post(post_id):
     form = WikiPostForm()
     session = db_session.create_session()
@@ -314,7 +314,7 @@ def logout():
     return redirect("/forum")
 
 
-@app.route('/profile/<user_id>')
+@app.route('/profile&<user_id>')
 def profile(user_id):
     session = db_session.create_session()
     user = session.query(User).filter(User.id == user_id).first()
@@ -331,7 +331,7 @@ def profile(user_id):
     return render_template(**param)
 
 
-@app.route('/make/<type>/<user_id>')
+@app.route('/make&<type>&<user_id>')
 def make(type, user_id):
     param = dict()
     session = db_session.create_session()
@@ -359,7 +359,8 @@ def make(type, user_id):
 
     user.status = type
     session.commit()
-    return redirect(f'/profile/{user_id}')
+    return redirect(f'/profile&{user_id}')
 
 
-main()
+if __name__ == '__main__':
+    main()
