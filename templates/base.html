@@ -18,7 +18,7 @@
         {% if current_user.is_authenticated %}
             <p>
                 <img src="{{current_user.avatar}}" class="mr-3" alt="Аватар" height="32px">
-                <a class="navbar-brand" href="/profile/{{current_user.id}}">{{ current_user.name }}</a>
+                <a class="navbar-brand" href="/profile&{{current_user.id}}">{{ current_user.name }}</a>
                 <a class="btn btn-danger" href="/logout"><i class="fa fa-sign-out"></i> Выйти</a>
             </p>
         {% else %}
@@ -36,7 +36,7 @@
 <footer>
     <ul class="nav justify-content-center" style="margin: 10px;">
         <li class="nav-item" style="margin: 10px;">
-            <a class="btn btn-primary" href="#"><i class="fa fa-download"></i> Скачать игру</a>
+            <a class="btn btn-primary" href="download_game"><i class="fa fa-download"></i> Скачать игру</a>
         </li>
         <li class="nav-item" style="margin: 10px;">
             <a class="btn btn-primary" href="https://vk.com/CheckBeck"><i class="fa fa-vk"></i> Мы в vk</a>

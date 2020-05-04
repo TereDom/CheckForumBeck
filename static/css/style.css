@@ -3,5 +3,17 @@
 }
 
 body {
-    background: url(/static/img/bg.jpg);
+    background: url(/static/img/bg.jpg) fixed;
+}
+
+header{
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    background-color: rgba(0,0,0,0.1);
+}
+
+main {
+    margin-top: 70px;
 }

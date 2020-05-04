@@ -1,7 +1,7 @@
 import logging
 import os
 import datetime
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, send_from_directory
 from flask_login import login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.utils import redirect
 from data.refactore_image import refactor_image
@@ -360,6 +360,11 @@ def make(type, user_id):
     user.status = type
     session.commit()
     return redirect(f'/profile&{user_id}')
+
+
+@app.route('/download_game')
+def download_game():
+    return send_from_directory('data', filename='game.zip')
 
 
 if __name__ == '__main__':
