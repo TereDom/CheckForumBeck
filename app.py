@@ -24,7 +24,7 @@ logging.basicConfig(filename='example.log')
 def main():
     logging.info('Приложение запущено')
     # port = int(os.environ.get("PORT", 5000))
-    app.run(host='127.0.0.1', port=5000)
+    app.run(host='127.0.0.1', port=8000)
 
 
 @login_manager.user_loader
@@ -141,7 +141,9 @@ def refactor(type, item_id):
 
     if form.validate_on_submit():
         item.content = form.content.data
-        item.created_date = datetime.datetime.now()
+        print(str(datetime.datetime.now()).split('.')[0])
+        item.created_date = str(datetime.datetime.now()).split('.')[0]
+        print(item.created_date)
         if type == 'News':
             item.title = form.title.data
 
