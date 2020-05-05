@@ -1,7 +1,7 @@
 import logging
 import os
 import datetime
-from flask import Flask, render_template, url_for, send_from_directory
+from flask import Flask, render_template, url_for
 from flask_login import login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.utils import redirect
 from data.refactore_image import refactor_image
@@ -24,7 +24,7 @@ logging.basicConfig(filename='example.log')
 def main():
     logging.info('Приложение запущено')
     # port = int(os.environ.get("PORT", 5000))
-    app.run(host='127.0.0.1', port=8080)
+    app.run(host='127.0.0.1', port=8000)
 
 
 @login_manager.user_loader
@@ -141,7 +141,7 @@ def refactor(type, item_id):
 
     if form.validate_on_submit():
         item.content = form.content.data
-        item.created_date = datetime.datetime.now()
+        item.created_date = str(datetime.datetime.now()).split('.')[0]
         if type == 'News':
             item.title = form.title.data
 
@@ -360,11 +360,6 @@ def make(type, user_id):
     user.status = type
     session.commit()
     return redirect(f'/profile&{user_id}')
-
-
-@app.route('/download_game')
-def download_game():
-    return send_from_directory('data', filename='game.zip')
 
 
 if __name__ == '__main__':
