@@ -13,7 +13,7 @@
         {{item.content}}
     </div>
     <div>
-        Автор - <a href="/profile&{{item.user_id}}" style="color: #000000;">{{item.user.name}}</a>, Дата написания - {{item.created_date}}
+        <b>Автор</b> - <a href="/profile&{{item.user_id}}" style="color: #000000;">{{item.user.name}}</a>, <b>Дата написания</b> - {{item.created_date}}
     </div>
     {% if current_user.id %}
         <div>

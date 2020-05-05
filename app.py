@@ -24,7 +24,7 @@ logging.basicConfig(filename='example.log')
 def main():
     logging.info('Приложение запущено')
     # port = int(os.environ.get("PORT", 5000))
-    app.run(host='127.0.0.1', port=5000)
+    app.run(host='127.0.0.1', port=8080)
 
 
 @login_manager.user_loader
@@ -221,7 +221,7 @@ def create_comment(news_id, user_id):
 @app.route('/wiki', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def wiki():
     return render_template('general_wiki.html', title='Энциклопедия CheckBeck',
-                           status=current_user.status if type(current_user) == User else 'user')
+                           status=current_user.status if current_user.is_authenticated else 'user')
 
 
 @app.route('/wiki&new_wiki', methods=['GET', 'POST'])
