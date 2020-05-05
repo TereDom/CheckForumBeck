@@ -281,7 +281,7 @@ def print_wiki(status):
 def refactor_wiki_post(post_id):
     form = WikiPostForm()
     session = db_session.create_session()
-    wiki_post = session.query(WikiDB).filter(WikiDB.id == post_id)
+    wiki_post = session.query(WikiDB).filter(WikiDB.id == post_id).first()
     param = dict()
     if current_user.status != 'develop':
         param['template_name_or_list'] = 'error.html'
