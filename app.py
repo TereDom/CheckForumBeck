@@ -24,8 +24,8 @@ logging.basicConfig(filename='example.log')
 def main():
     """Запуск приложения"""
     logging.info('Приложение запущено')
-    # port = int(os.environ.get("PORT", 5000))
-    app.run(host='127.0.0.1', port=8080)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='127.0.0.1', port=port)
 
 
 @login_manager.user_loader
