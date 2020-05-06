@@ -11,57 +11,58 @@
     <h2>{{item.title}}</h2>
     <div>
         <div class="media-body">
-                <h5 class="mt-0"><a href="/profile&{{item.user_id}}" style="color: #000000;">
-                    <b>Автор</b> - {{item.user.name}}
-                    {% if item.user.status == "admin" %}
-                        <span class="badge badge-warning" style="color: #ffffff">Модератор</span>
-                    {% elif item.user.status == "develop" %}
-                        <span class="badge badge-danger">Разработчик</span>
-                    {% endif %}
-                </a></h5>
-                <div>
+            <h5 class="mt-0"><a href="/profile&{{item.user_id}}" style="color: #000000;">
+            <b>Автор</b> - {{item.user.name}}
+            {% if item.user.status == "admin" %}
+                <span class="badge badge-warning" style="color: #ffffff">Модератор</span>
+            {% elif item.user.status == "develop" %}
+                <span class="badge badge-danger">Разработчик</span>
+            {% endif %}
+            </a></h5>
+        <div>
         {{item.content}}
     </div>
-        <b>Дата написания</b> - {{item.created_date}}
-    </div>
-    {% if current_user.id %}
+    <b>Дата написания</b> - {{item.created_date}}
+</div>
+{% if current_user.id %}
+<div>
+    <a href="/create_comment&{{item.id}}&0" class="btn btn-primary"><i class="fa fa-commenting"></i> Комментировать</a>
+    {% if current_user.id == item.user_id %}
+        <a href="/refactor&News&{{item.id}}" class="btn btn-primary"><i class="fa fa-pencil"></i> Изменить</a>
+    {% endif %}
+    {% if current_user.id == item.user_id or current_user.status == "admin" %}
+        <a href="/delete&News&{{item.id}}" class="btn btn-danger"><i class="fa fa-trash"></i> Удалить</a>
+    {% endif %}
+</div>
+{% endif %}
+<h3>Комментарии</h3>
+{% for comment in comments %}
+{% if comment.news_id == item.id %}
+    <div class="media border rounded" style="margin: 10px;">
+        <img src="{{comment.user.avatar}}" class="mr-3" alt="Аватар" height="64px">
+        <div class="media-body">
+        <h5 class="mt-0"><a href="/profile&{{comment.user_id}}" style="color: #000000;">
+            {{comment.user.name}}
+            {% if comment.user.status == "admin" %}
+                <span class="badge badge-warning" style="color: #ffffff">Модератор</span>
+            {% elif comment.user.status == "develop" %}
+                <span class="badge badge-danger">Разработчик</span>
+            {% endif %}
+        </a></h5>
+        {{comment.content}}
         <div>
-            <a href="/create_comment&{{item.id}}&0" class="btn btn-primary"><i class="fa fa-commenting"></i> Комментировать</a>
-            {% if current_user.id == item.user_id %}
-                <a href="/refactor&News&{{item.id}}" class="btn btn-primary"><i class="fa fa-pencil"></i> Изменить</a>
+            {% if current_user == comment.user %}
+                <a href="/refactor&Comment&{{comment.id}}" class="btn btn-primary"><i class="fa fa-pencil fa-fw"></i> Изменить</a>
             {% endif %}
-            {% if current_user.id == item.user_id or current_user.status == "admin" %}
-                <a href="/delete&News&{{item.id}}" class="btn btn-danger"><i class="fa fa-trash"></i> Удалить</a>
+            {% if current_user.status == 'admin' and comment.user.status == 'user' or current_user == comment.user %}
+                <a href="/delete&Comment&{{comment.id}}" class="btn btn-danger"><i class="fa fa-trash"></i> Удалить</a>
             {% endif %}
         </div>
-    {% endif %}
-    <h3>Комментарии</h3>
-    {% for comment in comments %}
-    {% if comment.news_id == item.id %}
-        <div class="media border rounded" style="margin: 10px;">
-            <img src="{{comment.user.avatar}}" class="mr-3" alt="Аватар" height="64px">
-            <div class="media-body">
-                <h5 class="mt-0"><a href="/profile&{{comment.user_id}}" style="color: #000000;">
-                    {{comment.user.name}}
-                    {% if comment.user.status == "admin" %}
-                        <span class="badge badge-warning" style="color: #ffffff">Модератор</span>
-                    {% elif comment.user.status == "develop" %}
-                        <span class="badge badge-danger">Разработчик</span>
-                    {% endif %}
-                </a></h5>
-                {{comment.content}}
-                <div>
-                    {% if current_user == comment.user %}
-                        <a href="/refactor&Comment&{{comment.id}}" class="btn btn-primary"><i class="fa fa-pencil fa-fw"></i> Изменить</a>
-                    {% endif %}
-                    {% if current_user.status == 'admin' and comment.user.status == 'user' or current_user == comment.user %}
-                        <a href="/delete&Comment&{{comment.id}}" class="btn btn-danger"><i class="fa fa-trash"></i> Удалить</a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    {% endif %}
-    {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+</div>
 </div>
 {% endfor %}
 {% endblock %}

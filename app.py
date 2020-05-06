@@ -128,7 +128,7 @@ def create_news():
 
 @app.route('/refactor&<type>&<item_id>', methods=['GET', 'POST'])
 def refactor(type, item_id):
-    """Изменение существующей новости"""
+    """Изменение существующей новости или коментария"""
     form = eval(type + 'Form()')
     session = db_session.create_session()
 
