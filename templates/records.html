@@ -10,9 +10,6 @@
 
     <h2>{{item.title}}</h2>
     <div>
-        {{item.content}}
-    </div>
-    <div>
         <div class="media-body">
                 <h5 class="mt-0"><a href="/profile&{{item.user_id}}" style="color: #000000;">
                     <b>Автор</b> - {{item.user.name}}
@@ -22,8 +19,9 @@
                         <span class="badge badge-danger">Разработчик</span>
                     {% endif %}
                 </a></h5>
-                {{item.content}}
                 <div>
+        {{item.content}}
+    </div>
         <b>Дата написания</b> - {{item.created_date}}
     </div>
     {% if current_user.id %}
