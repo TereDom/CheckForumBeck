@@ -232,6 +232,7 @@ def create_new_wiki():
         file_way = os.getcwd() + f'\\static\\img\\wiki\\{img.filename}'
         img.save(file_way)
         if form.status.data not in ['monster', 'object', 'weapon']:
+            print('error')
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
                                    form=form, massage='Не существующий тип объекта')
         session = db_session.create_session()
