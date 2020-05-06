@@ -13,7 +13,18 @@
         {{item.content}}
     </div>
     <div>
-        <b>Автор</b> - <a href="/profile&{{item.user_id}}" style="color: #000000;">{{item.user.name}}</a>, <b>Дата написания</b> - {{item.created_date}}
+        <div class="media-body">
+                <h5 class="mt-0"><a href="/profile&{{item.user_id}}" style="color: #000000;">
+                    <b>Автор</b> - {{item.user.name}}
+                    {% if item.user.status == "admin" %}
+                        <span class="badge badge-warning" style="color: #ffffff">Модератор</span>
+                    {% elif item.user.status == "develop" %}
+                        <span class="badge badge-danger">Разработчик</span>
+                    {% endif %}
+                </a></h5>
+                {{item.content}}
+                <div>
+        <b>Дата написания</b> - {{item.created_date}}
     </div>
     {% if current_user.id %}
         <div>

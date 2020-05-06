@@ -1,7 +1,6 @@
 import vk_api
-from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 from data import db_session
-from data.__all_models import User, WikiDB
+from data.__all_models import User
 import random
 
 
@@ -19,13 +18,11 @@ def bot(status, recipient=None):
         recipients = [recipient]
     else:
         recipients = session.query(User)
-    print(recipients)
     for elem in recipients:
-        print(elem.vk_id)
         if len(str(elem.vk_id)):
             try:
                 vk.messages.send(user_id=vk.users.get(user_ids=[elem.vk_id])[0]['id'],
-                                 message=f'{messages[status]} \n http://127.0.0.1:8000/forum',
+                                 message=f'{messages[status]} \n http://checkbecksite.herokuapp.com/forum',
                                  random_id=random.randint(0, 2 ** 64))
             except:
                 pass

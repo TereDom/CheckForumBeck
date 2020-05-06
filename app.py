@@ -22,19 +22,22 @@ logging.basicConfig(filename='example.log')
 
 
 def main():
+    """Запуск приложения"""
     logging.info('Приложение запущено')
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    # port = int(os.environ.get("PORT", 5000))
+    app.run(host='127.0.0.1', port=8080)
 
 
 @login_manager.user_loader
 def load_user(user_id):
+    """Загрузка пользователя"""
     session = db_session.create_session()
     return session.query(User).get(user_id)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    """Ругистрация нового пользователя"""
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
@@ -67,6 +70,7 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """Авторизация пользователя"""
     form = LoginForm()
     if form.validate_on_submit():
         session = db_session.create_session()
@@ -82,11 +86,13 @@ def login():
 
 @app.route('/')
 def main_page():
+    """Главная страница"""
     return render_template('main.html')
 
 
 @app.route('/forum', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def records():
+    """Получение новостей из базы данных для главной страницы форума"""
     session = db_session.create_session()
     news = session.query(News)
     comments = session.query(Comment)
@@ -95,6 +101,7 @@ def records():
 
 @app.route('/create_news', methods=['GET', 'POST'])
 def create_news():
+    """Создание новой новости"""
     form = NewsForm()
 
     param = dict()
@@ -114,13 +121,14 @@ def create_news():
         session.merge(current_user)
         session.add(news)
         session.commit()
-        # bot("new_record")
+        bot("new_record")
         return redirect('/forum')
     return render_template(**param)
 
 
 @app.route('/refactor&<type>&<item_id>', methods=['GET', 'POST'])
 def refactor(type, item_id):
+    """Изменение существующей новости"""
     form = eval(type + 'Form()')
     session = db_session.create_session()
 
@@ -164,6 +172,7 @@ def refactor(type, item_id):
 
 @app.route('/delete&<type>&<item_id>')
 def delete(type, item_id):
+    """Удаление новости"""
     session = db_session.create_session()
     item = session.query(eval(type)).filter(eval(type).id == item_id).first()
     param = dict()
@@ -191,6 +200,7 @@ def delete(type, item_id):
 
 @app.route('/create_comment&<news_id>&<user_id>', methods=['GET', 'POST'])
 def create_comment(news_id, user_id):
+    """Создание комментария к одной из существующих новостей"""
     form = CommentForm()
 
     param = dict()
@@ -220,19 +230,20 @@ def create_comment(news_id, user_id):
 
 @app.route('/wiki', methods=['GET', 'POST', 'DELETE', 'PUT'])
 def wiki():
+    """Главная страница WIKI"""
     return render_template('general_wiki.html', title='Энциклопедия CheckBeck',
                            status=current_user.status if current_user.is_authenticated else 'user')
 
 
 @app.route('/wiki&new_wiki', methods=['GET', 'POST'])
 def create_new_wiki():
+    """Создание новой записи на WIKI"""
     form = WikiPostForm()
     if form.validate_on_submit():
         img = form.image.data
         file_way = os.getcwd() + f'\\static\\img\\wiki\\{img.filename}'
         img.save(file_way)
         if form.status.data not in ['monster', 'object', 'weapon']:
-            print('error')
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
                                    form=form, massage='Не существующий тип объекта')
         session = db_session.create_session()
@@ -251,6 +262,7 @@ def create_new_wiki():
 
 @app.route('/wiki&delete_post&<post_id>')
 def delete_post(post_id):
+    """Удаление WIKI-поста"""
     param = dict()
     if current_user.status != 'develop':
         param['template_name_or_list'] = 'error.html'
@@ -272,6 +284,7 @@ def delete_post(post_id):
 
 @app.route('/wiki&<status>')
 def print_wiki(status):
+    """Страница одного из трех WIKI-разделов"""
     session = db_session.create_session()
     wiki_base = session.query(WikiDB)
     return render_template('wiki.html', title=f'Энциклопедия CheckBeck - {status}',
@@ -280,6 +293,7 @@ def print_wiki(status):
 
 @app.route('/refactor_wiki_post&<post_id>')
 def refactor_wiki_post(post_id):
+    """Изменение WIKI-поста"""
     form = WikiPostForm()
     session = db_session.create_session()
     wiki_post = session.query(WikiDB).filter(WikiDB.id == post_id).first()
@@ -311,12 +325,14 @@ def refactor_wiki_post(post_id):
 @app.route('/logout')
 @login_required
 def logout():
+    """Выход тз аккаунта пользователя"""
     logout_user()
     return redirect("/forum")
 
 
 @app.route('/profile&<user_id>')
 def profile(user_id):
+    """Профиль пользователя"""
     session = db_session.create_session()
     user = session.query(User).filter(User.id == user_id).first()
     news = session.query(News).filter(News.user_id == user_id)
@@ -334,6 +350,7 @@ def profile(user_id):
 
 @app.route('/make&<type>&<user_id>')
 def make(type, user_id):
+    """Изменение статуса пользователя"""
     param = dict()
     session = db_session.create_session()
     user = session.query(User).filter(User.id == user_id).first()
