@@ -12,9 +12,10 @@ def bot(status, recipient=None):
     db_session.global_init('db/DataBase.sqlite')
     session = db_session.create_session()
     messages = {'wiki_change': 'В раздел WIKI длбавлена новая запись', 'new_record': 'На форум добавлена новая запись',
-                'new_comment': 'Под Вашей записью оставлен новый комментарий'}
+                'new_comment': 'Под Вашей записью оставлен новый комментарий',
+                'delete_news': 'Ваша запись удалена модератором сайта'}
 
-    if status == "new_comment":
+    if status == "new_comment" or status == "delete_news":
         recipients = [recipient]
     else:
         recipients = session.query(User)

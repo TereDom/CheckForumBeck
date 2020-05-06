@@ -195,6 +195,8 @@ def delete(type, item_id):
         for item in comments:
             session.delete(item)
     session.commit()
+    if current_user.status == 'admin':
+        bot('delete_news', recipient=session.query(User).filter(User.id == item.user_id).first())
     return redirect('/forum')
 
 
