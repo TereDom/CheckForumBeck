@@ -25,7 +25,7 @@ def main():
     """Запуск приложения"""
     logging.info('Приложение запущено')
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='127.0.0.1', port=port)
+    app.run(host='0.0.0.0', port=port)
 
 
 @login_manager.user_loader
@@ -159,7 +159,7 @@ def refactor(type, item_id):
 
         return redirect('/forum')
 
-    param['title'] = 'Изменение ' + 'новости' if type == 'News' else 'комментария'
+    param['title'] = 'Изменение ' + ('новости' if type == 'News' else 'комментария')
     param['style_way'] = url_for('static', filename='css/style.css')
     param['form'] = form
     param['template_name_or_list'] = type.lower() + '.html'
