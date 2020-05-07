@@ -22,7 +22,7 @@
                 {% if user.vk_id%}
                     <li class="list-group-item">VK id: {{user.vk_id}}</li>
                 {% endif %}
-                {% if current_user.status != 'user' and current_user != user %}
+                {% if ((current_user.status == 'admin' and user.status != 'develop') or current_user.status == 'develop') and user.status != 'develop' %}
                     <li class="list-group-item">
                         Назначить:<br>
                         <div class="btn-group">
