@@ -25,7 +25,7 @@ def main():
     """Запуск приложения"""
     logging.info('Приложение запущено')
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='127.0.0.1', port=port)
 
 
 @login_manager.user_loader
@@ -87,6 +87,8 @@ def login():
 @app.route('/')
 def main_page():
     """Главная страница"""
+    param = dict()
+    param['title'] = "CheckBeck.site"
     return render_template('main.html')
 
 
@@ -293,7 +295,7 @@ def print_wiki(status):
                            wiki_base=wiki_base, status=status)
 
 
-@app.route('/refactor_wiki_post&<post_id>')
+@app.route('/refactor_wiki_post&<post_id>', methods=['GET', 'POST'])
 def refactor_wiki_post(post_id):
     """Изменение WIKI-поста"""
     form = WikiPostForm()
@@ -311,6 +313,22 @@ def refactor_wiki_post(post_id):
         param['content'] = 'Запись не найдена'
         param['from'] = '/wiki'
         return render_template(**param)
+
+    if form.validate_on_submit():
+        img = form.image.data
+        file_way = os.getcwd() + f'\\static\\img\\wiki\\{img.filename}'
+        img.save(file_way)
+        if form.status.data not in ['monster', 'object', 'weapon']:
+            return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
+                                   form=form, massage='Не существующий тип объекта')
+
+        wiki_post.title = form.title.data
+        wiki_post.status = form.status.data
+        wiki_post.image = img.filename
+        wiki_post.text = form.content.data
+
+        session.commit()
+        return redirect('/wiki')
 
     form.title.data = wiki_post.title
     form.content.data = wiki_post.text
