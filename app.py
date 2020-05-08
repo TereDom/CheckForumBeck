@@ -245,8 +245,9 @@ def create_new_wiki():
     form = WikiPostForm()
     if form.validate_on_submit():
         img = form.image.data
-        file_way = os.getcwd() + f'\\static\\img\\wiki\\{img.filename}'
+        file_way = f'\\static\\img\\wiki\\{img.filename}'
         img.save(file_way)
+        print(file_way)
         if form.status.data not in ['monster', 'object', 'weapon']:
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
                                    form=form, massage='Не существующий тип объекта')
