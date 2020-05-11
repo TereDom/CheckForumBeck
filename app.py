@@ -245,9 +245,8 @@ def create_new_wiki():
     form = WikiPostForm()
     if form.validate_on_submit():
         img = form.image.data
-        file_way = f'\\static\\img\\wiki\\{img.filename}'
-        img.save(file_way)
-        print(file_way)
+        # file_way = f'\\static\\img\\wiki\\{img.filename}'
+        img.save(f'http://checkbecksite.herokuapp.com\\static\\img\\wiki\\{img.filename}')
         if form.status.data not in ['monster', 'object', 'weapon']:
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
                                    form=form, massage='Не существующий тип объекта')
