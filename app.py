@@ -301,7 +301,7 @@ def print_wiki(status):
     return render_template('wiki.html', title=f'Энциклопедия CheckBeck - {status}',
                            wiki_base=wiki_base, status=status)
 
-
+# http://checkbecksite.herokuapp.com/static/img/wiki/diskStatusGood-125.png
 @app.route('/refactor_wiki_post&<post_id>', methods=['GET', 'POST'])
 def refactor_wiki_post(post_id):
     """Изменение WIKI-поста"""
