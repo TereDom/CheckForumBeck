@@ -248,7 +248,7 @@ def create_new_wiki():
     if form.validate_on_submit():
         img = form.image.data
 
-        fh = open(f"static\\img\\wiki\\{img.filename}", "wb")
+        fh = open(f"\\static\\img\\wiki\\{img.filename}", "wb")
         fh.write(decodebytes(img))
         fh.close()
 
@@ -323,7 +323,8 @@ def refactor_wiki_post(post_id):
 
     if form.validate_on_submit():
         img = form.image.data
-        file_way = f'\\static\\img\\wiki\\{img.filename}'
+        file_way = os.getcwd() + f'\\static\\img\\wiki\\{img.filename}'
+        print(img.filename)
         img.save(file_way)
         if form.status.data not in ['monster', 'object', 'weapon']:
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
