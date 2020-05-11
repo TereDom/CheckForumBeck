@@ -323,13 +323,18 @@ def refactor_wiki_post(post_id):
 
     if form.validate_on_submit():
         img = form.image.data
+# http://checkbecksite.herokuapp.com/static/img/wiki/diskStatusBad-250.png
         file_way = f'\\static\\img\\wiki\\{img.filename}'
         print(img.filename)
-        img.save(file_way)
+        try:
+            img.save(file_way)
+        except IOError as IO:
+            logging.info(IO)
+
         if form.status.data not in ['monster', 'object', 'weapon']:
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
                                    form=form, massage='Не существующий тип объекта')
-# http://checkbecksite.herokuapp.com/static/img/wiki/diskStatusBad-250.png
+
         wiki_post.title = form.title.data
         wiki_post.status = form.status.data
         wiki_post.image = img.filename
