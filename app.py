@@ -330,6 +330,8 @@ def refactor_wiki_post(post_id):
             img.save(file_way)
         except IOError as IO:
             logging.info(IO)
+        else:
+            logging.info(file_way)
 
         if form.status.data not in ['monster', 'object', 'weapon']:
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
