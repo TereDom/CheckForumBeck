@@ -5,6 +5,8 @@ from flask import Flask, render_template, url_for
 from flask_login import login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.utils import redirect
 from data.refactore_image import refactor_image
+from base64 import decodebytes
+
 
 from vk_bot import bot
 
@@ -245,8 +247,13 @@ def create_new_wiki():
     form = WikiPostForm()
     if form.validate_on_submit():
         img = form.image.data
-        file_way = f'\\static\\img\\wiki\\{img.filename}'
-        img.save(file_way)
+
+        fh = open(f"static\\img\\wiki\\{img.filename}", "wb")
+        fh.write(decodebytes(img))
+        fh.close()
+
+        # file_way = f'\\static\\img\\wiki\\{img.filename}'
+        # img.save(file_way)
         if form.status.data not in ['monster', 'object', 'weapon']:
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
                                    form=form, massage='Не существующий тип объекта')
