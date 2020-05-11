@@ -58,8 +58,8 @@ def register():
         session.commit()
         f = form.avatar.data
         if f:
-            file_way = os.getcwd() + f'\\static\\img\\avatars\\avatar_{user.id}.png'
-            f.save(os.getcwd() + f'\\static\\img\\avatars\\avatar_{user.id}.png')
+            file_way = f'\\static\\img\\avatars\\avatar_{user.id}.png'
+            f.save(f'\\static\\img\\avatars\\avatar_{user.id}.png')
             refactor_image(file_way)
             user = session.query(User).filter(User.email == form.email.data).first()
             user.avatar = f'/static/img/avatars/avatar_{user.id}.png'
@@ -245,8 +245,8 @@ def create_new_wiki():
     form = WikiPostForm()
     if form.validate_on_submit():
         img = form.image.data
-        # file_way = f'\\static\\img\\wiki\\{img.filename}'
-        img.save(f'http://checkbecksite.herokuapp.com\\static\\img\\wiki\\{img.filename}')
+        file_way = f'\\static\\img\\wiki\\{img.filename}'
+        img.save(file_way)
         if form.status.data not in ['monster', 'object', 'weapon']:
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
                                    form=form, massage='Не существующий тип объекта')
@@ -316,7 +316,7 @@ def refactor_wiki_post(post_id):
 
     if form.validate_on_submit():
         img = form.image.data
-        file_way = os.getcwd() + f'\\static\\img\\wiki\\{img.filename}'
+        file_way = f'\\static\\img\\wiki\\{img.filename}'
         img.save(file_way)
         if form.status.data not in ['monster', 'object', 'weapon']:
             return render_template('create_new_wiki.html', title='Дополнить CheckWikiBeck',
